@@ -10,7 +10,7 @@ class BankManagementSystem {
         Scanner sc = new Scanner(System.in);
         ArrayList<String> history = new ArrayList<>();
 
-        // Account Creation
+        // ===== ACCOUNT CREATION =====
         System.out.println("===== BANK ACCOUNT CREATION =====");
 
         System.out.print("Enter your name: ");
@@ -27,7 +27,7 @@ class BankManagementSystem {
 
         sc.nextLine();
 
-        // PIN Creation
+        // ===== PIN CREATION =====
         String pin;
 
         while (true) {
@@ -40,6 +40,7 @@ class BankManagementSystem {
                 boolean valid = true;
 
                 for (int i = 0; i < pin.length(); i++) {
+
                     if (!Character.isDigit(pin.charAt(i))) {
                         valid = false;
                         break;
@@ -57,14 +58,16 @@ class BankManagementSystem {
             }
         }
 
-        // Generate 10-digit Account Number
+        // ===== ACCOUNT NUMBER GENERATION =====
         Random rand = new Random();
-        long accountNo = 1000000000L + (long)(rand.nextDouble() * 9000000000L);
+
+        long accountNo = 1000000000L +
+                (long)(rand.nextDouble() * 9000000000L);
 
         System.out.println("\nAccount created successfully!");
         System.out.println("Your Account Number: " + accountNo);
 
-        // Initial Deposit
+        // ===== INITIAL DEPOSIT =====
         double balance;
 
         while (true) {
@@ -79,12 +82,13 @@ class BankManagementSystem {
             }
         }
 
-        history.add("₹" + balance + " deposited on " + LocalDateTime.now());
+        history.add("₹" + balance +
+                " deposited on " + LocalDateTime.now());
 
         System.out.println("Amount deposited successfully!");
         System.out.println("Current Balance: ₹" + balance);
 
-        // Login System
+        // ===== LOGIN SYSTEM =====
         System.out.println("\n===== LOGIN SYSTEM =====");
 
         while (true) {
@@ -97,15 +101,18 @@ class BankManagementSystem {
             System.out.print("Enter PIN: ");
             String enteredPin = sc.nextLine();
 
-            if (enteredAcc == accountNo && enteredPin.equals(pin)) {
+            if (enteredAcc == accountNo &&
+                    enteredPin.equals(pin)) {
+
                 System.out.println("\nLogin Successful!");
                 break;
+
             } else {
                 System.out.println("Wrong Credentials!");
             }
         }
 
-        // Banking Interface
+        // ===== BANK MENU =====
         while (true) {
 
             System.out.println("\n===== BANK MENU =====");
@@ -113,90 +120,213 @@ class BankManagementSystem {
             System.out.println("2. Withdraw");
             System.out.println("3. Balance");
             System.out.println("4. Interest Calculator");
-            System.out.println("5. Transaction History");
-            System.out.println("6. Exit");
+            System.out.println("5. Apply Loan");
+            System.out.println("6. Transaction History");
+            System.out.println("7. Exit");
 
             System.out.print("Choose an option: ");
             int choice = sc.nextInt();
 
             switch (choice) {
 
+                // ===== DEPOSIT =====
                 case 1:
 
-                    // Deposit
+                    sc.nextLine();
+
+                    System.out.print("Enter PIN for verification: ");
+                    String depositPin = sc.nextLine();
+
+                    if (!depositPin.equals(pin)) {
+                        System.out.println("Incorrect PIN!");
+                        break;
+                    }
+
                     System.out.print("Enter amount to deposit: ₹");
                     double deposit = sc.nextDouble();
 
                     if (deposit <= 0) {
-                        System.out.println("Deposit amount must be positive!");
+
+                        System.out.println(
+                                "Deposit amount must be positive!");
+
                     } else {
 
                         balance += deposit;
 
-                        history.add("₹" + deposit + " deposited on " + LocalDateTime.now());
+                        history.add("₹" + deposit +
+                                " deposited on " +
+                                LocalDateTime.now());
 
-                        System.out.println("Deposit Successful!");
-                        System.out.println("Updated Balance: ₹" + balance);
+                        System.out.println(
+                                "Deposit Successful!");
+
+                        System.out.println(
+                                "Updated Balance: ₹" + balance);
                     }
 
                     break;
 
+                // ===== WITHDRAW =====
                 case 2:
 
-                    // Withdraw
+                    sc.nextLine();
+
+                    System.out.print("Enter PIN for verification: ");
+                    String withdrawPin = sc.nextLine();
+
+                    if (!withdrawPin.equals(pin)) {
+                        System.out.println("Incorrect PIN!");
+                        break;
+                    }
+
                     System.out.print("Enter amount to withdraw: ₹");
                     double withdraw = sc.nextDouble();
 
                     if (withdraw <= 0) {
-                        System.out.println("Withdrawal amount must be positive!");
+
+                        System.out.println(
+                                "Withdrawal amount must be positive!");
+
                     } else if (withdraw > balance) {
-                        System.out.println("Insufficient Balance!");
+
+                        System.out.println(
+                                "Insufficient Balance!");
+
                     } else {
 
                         balance -= withdraw;
 
-                        history.add("₹" + withdraw + " withdrawn on " + LocalDateTime.now());
+                        history.add("₹" + withdraw +
+                                " withdrawn on " +
+                                LocalDateTime.now());
 
-                        System.out.println("Withdrawal Successful!");
-                        System.out.println("Remaining Balance: ₹" + balance);
+                        System.out.println(
+                                "Withdrawal Successful!");
+
+                        System.out.println(
+                                "Remaining Balance: ₹" + balance);
                     }
 
                     break;
 
+                // ===== BALANCE =====
                 case 3:
 
-                    // Balance
-                    System.out.println("Current Balance: ₹" + balance);
+                    System.out.println(
+                            "Current Balance: ₹" + balance);
+
                     break;
 
+                // ===== INTEREST CALCULATOR =====
                 case 4:
 
-                    // Interest Calculator
-                    System.out.print("Enter interest rate (%): ");
+                    System.out.print(
+                            "Enter interest rate (%): ");
+
                     double rate = sc.nextDouble();
 
-                    System.out.print("Enter time (in years): ");
+                    System.out.print(
+                            "Enter time (in years): ");
+
                     double time = sc.nextDouble();
 
                     if (rate < 0 || time < 0) {
-                        System.out.println("Rate and time cannot be negative!");
+
+                        System.out.println(
+                                "Rate and time cannot be negative!");
+
                     } else {
 
-                        double interest = (balance * rate * time) / 100;
+                        double interest =
+                                (balance * rate * time) / 100;
 
-                        System.out.println("Interest Earned: ₹" + interest);
-                        System.out.println("Total Amount after Interest: ₹" + (balance + interest));
+                        System.out.println(
+                                "Interest Earned: ₹" + interest);
+
+                        System.out.println(
+                                "Total Amount after Interest: ₹"
+                                        + (balance + interest));
                     }
 
                     break;
 
+                // ===== APPLY LOAN =====
                 case 5:
 
-                    // Transaction History
-                    System.out.println("\n===== TRANSACTION HISTORY =====");
+                    System.out.println(
+                            "\n===== LOAN APPLICATION =====");
+
+                    System.out.print(
+                            "Enter loan amount: ₹");
+
+                    double loanAmount = sc.nextDouble();
+
+                    System.out.print(
+                            "Enter annual interest rate (%): ");
+
+                    double loanRate = sc.nextDouble();
+
+                    System.out.print(
+                            "Enter loan duration (in years): ");
+
+                    int years = sc.nextInt();
+
+                    if (loanAmount <= 0 ||
+                            loanRate < 0 ||
+                            years <= 0) {
+
+                        System.out.println(
+                                "Invalid loan details!");
+
+                    } else {
+
+                        double simpleInterest =
+                                (loanAmount * loanRate * years) / 100;
+
+                        double totalPayable =
+                                loanAmount + simpleInterest;
+
+                        double monthlyEMI =
+                                totalPayable / (years * 12);
+
+                        System.out.println(
+                                "\n===== LOAN DETAILS =====");
+
+                        System.out.println(
+                                "Loan Amount: ₹" + loanAmount);
+
+                        System.out.println(
+                                "Interest Amount: ₹"
+                                        + simpleInterest);
+
+                        System.out.println(
+                                "Total Payable Amount: ₹"
+                                        + totalPayable);
+
+                        System.out.println(
+                                "Monthly EMI: ₹"
+                                        + monthlyEMI);
+
+                        history.add(
+                                "Loan of ₹" + loanAmount +
+                                        " applied on " +
+                                        LocalDateTime.now());
+                    }
+
+                    break;
+
+                // ===== TRANSACTION HISTORY =====
+                case 6:
+
+                    System.out.println(
+                            "\n===== TRANSACTION HISTORY =====");
 
                     if (history.isEmpty()) {
-                        System.out.println("No transactions found!");
+
+                        System.out.println(
+                                "No transactions found!");
+
                     } else {
 
                         for (String transaction : history) {
@@ -206,10 +336,12 @@ class BankManagementSystem {
 
                     break;
 
-                case 6:
+                // ===== EXIT =====
+                case 7:
 
-                    // Exit
-                    System.out.println("Thank you for using our Bank System!");
+                    System.out.println(
+                            "Thank you for using our Bank System!");
+
                     sc.close();
                     return;
 
