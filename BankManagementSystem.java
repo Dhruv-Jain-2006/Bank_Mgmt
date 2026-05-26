@@ -14,6 +14,7 @@ class Account {
     double balance;
     ArrayList<String> history;
 
+    // ===== CONSTRUCTOR =====
     public Account(String name, int age, String pin,
                    long accountNo, double balance) {
 
@@ -22,7 +23,8 @@ class Account {
         this.pin = pin;
         this.accountNo = accountNo;
         this.balance = balance;
-        this.history = new ArrayList<>();
+
+        history = new ArrayList<>();
 
         history.add("₹" + balance +
                 " deposited on " + LocalDateTime.now());
@@ -36,21 +38,37 @@ public class BankManagementSystem {
 
         Scanner sc = new Scanner(System.in);
 
-        // Stores all users using account number
+        // Stores all accounts
         HashMap<Long, Account> accounts = new HashMap<>();
 
         Random rand = new Random();
 
+        // ===== MAIN LOOP =====
         while (true) {
 
             System.out.println("\n===== BANK MANAGEMENT SYSTEM =====");
+
             System.out.println("1. Create Account");
             System.out.println("2. Login");
             System.out.println("3. Exit");
 
-            System.out.print("Choose option: ");
-            int mainChoice = sc.nextInt();
-            sc.nextLine();
+            int mainChoice;
+
+            // ===== EXCEPTION HANDLING =====
+            while (true) {
+
+                try {
+
+                    System.out.print("Choose option: ");
+                    mainChoice = Integer.parseInt(sc.nextLine());
+                    break;
+
+                } catch (Exception e) {
+
+                    System.out.println(
+                            "Invalid input! Enter numbers only.");
+                }
+            }
 
             switch (mainChoice) {
 
@@ -63,19 +81,32 @@ public class BankManagementSystem {
                     System.out.print("Enter your name: ");
                     String name = sc.nextLine();
 
-                    System.out.print("Enter your age: ");
-                    int age = sc.nextInt();
+                    int age;
 
-                    if (age < 18) {
+                    while (true) {
 
-                        System.out.println(
-                                "Age must be 18 or above!");
-                        break;
+                        try {
+
+                            System.out.print("Enter your age: ");
+                            age = Integer.parseInt(sc.nextLine());
+
+                            if (age < 18) {
+
+                                System.out.println(
+                                        "Age must be 18 or above!");
+                                continue;
+                            }
+
+                            break;
+
+                        } catch (Exception e) {
+
+                            System.out.println(
+                                    "Invalid age!");
+                        }
                     }
 
-                    sc.nextLine();
-
-                    // PIN CREATION
+                    // ===== PIN CREATION =====
                     String pin;
 
                     while (true) {
@@ -89,7 +120,8 @@ public class BankManagementSystem {
 
                             boolean valid = true;
 
-                            for (int i = 0; i < pin.length(); i++) {
+                            for (int i = 0;
+                                 i < pin.length(); i++) {
 
                                 if (!Character.isDigit(
                                         pin.charAt(i))) {
@@ -100,10 +132,13 @@ public class BankManagementSystem {
                             }
 
                             if (valid) {
+
                                 break;
+
                             } else {
+
                                 System.out.println(
-                                        "PIN must contain only digits!");
+                                        "PIN must contain digits only!");
                             }
 
                         } else {
@@ -113,12 +148,12 @@ public class BankManagementSystem {
                         }
                     }
 
-                    // ACCOUNT NUMBER GENERATION
+                    // ===== ACCOUNT NUMBER GENERATION =====
                     long accountNo = 1000000000L +
                             (long)(rand.nextDouble()
                                     * 9000000000L);
 
-                    // Ensure unique account number
+                    // Ensure uniqueness
                     while (accounts.containsKey(accountNo)) {
 
                         accountNo = 1000000000L +
@@ -126,19 +161,35 @@ public class BankManagementSystem {
                                         * 9000000000L);
                     }
 
-                    System.out.print(
-                            "Enter initial deposit: ₹");
+                    double balance;
 
-                    double balance = sc.nextDouble();
+                    while (true) {
 
-                    if (balance <= 0) {
+                        try {
 
-                        System.out.println(
-                                "Deposit must be positive!");
-                        break;
+                            System.out.print(
+                                    "Enter initial deposit: ₹");
+
+                            balance = Double.parseDouble(
+                                    sc.nextLine());
+
+                            if (balance <= 0) {
+
+                                System.out.println(
+                                        "Deposit must be positive!");
+                                continue;
+                            }
+
+                            break;
+
+                        } catch (Exception e) {
+
+                            System.out.println(
+                                    "Invalid amount!");
+                        }
                     }
 
-                    // CREATE ACCOUNT OBJECT
+                    // ===== CREATE ACCOUNT OBJECT =====
                     Account user = new Account(
                             name,
                             age,
@@ -147,7 +198,7 @@ public class BankManagementSystem {
                             balance
                     );
 
-                    // STORE USER
+                    // ===== STORE ACCOUNT =====
                     accounts.put(accountNo, user);
 
                     System.out.println(
@@ -162,19 +213,29 @@ public class BankManagementSystem {
                 // ===== LOGIN =====
                 case 2:
 
-                    System.out.println(
-                            "\n===== LOGIN =====");
+                    System.out.println("\n===== LOGIN =====");
 
-                    System.out.print(
-                            "Enter Account Number: ");
+                    long enteredAcc;
 
-                    long enteredAcc = sc.nextLong();
-                    sc.nextLine();
+                    try {
+
+                        System.out.print(
+                                "Enter Account Number: ");
+
+                        enteredAcc = Long.parseLong(
+                                sc.nextLine());
+
+                    } catch (Exception e) {
+
+                        System.out.println(
+                                "Invalid Account Number!");
+                        break;
+                    }
 
                     System.out.print("Enter PIN: ");
                     String enteredPin = sc.nextLine();
 
-                    // CHECK ACCOUNT EXISTS
+                    // ===== CHECK ACCOUNT EXISTS =====
                     if (!accounts.containsKey(enteredAcc)) {
 
                         System.out.println(
@@ -185,8 +246,9 @@ public class BankManagementSystem {
                     Account currentUser =
                             accounts.get(enteredAcc);
 
-                    // VERIFY PIN
-                    if (!currentUser.pin.equals(enteredPin)) {
+                    // ===== VERIFY PIN =====
+                    if (!currentUser.pin.equals(
+                            enteredPin)) {
 
                         System.out.println(
                                 "Incorrect PIN!");
@@ -210,20 +272,45 @@ public class BankManagementSystem {
                         System.out.println("6. Transaction History");
                         System.out.println("7. Logout");
 
-                        System.out.print(
-                                "Choose an option: ");
+                        int choice;
 
-                        int choice = sc.nextInt();
+                        // ===== SAFE MENU INPUT =====
+                        try {
+
+                            System.out.print(
+                                    "Choose an option: ");
+
+                            choice = Integer.parseInt(
+                                    sc.nextLine());
+
+                        } catch (Exception e) {
+
+                            System.out.println(
+                                    "Invalid input! Enter numbers only.");
+                            continue;
+                        }
 
                         switch (choice) {
 
                             // ===== DEPOSIT =====
                             case 1:
 
-                                System.out.print(
-                                        "Enter amount to deposit: ₹");
+                                double deposit;
 
-                                double deposit = sc.nextDouble();
+                                try {
+
+                                    System.out.print(
+                                            "Enter amount to deposit: ₹");
+
+                                    deposit = Double.parseDouble(
+                                            sc.nextLine());
+
+                                } catch (Exception e) {
+
+                                    System.out.println(
+                                            "Invalid amount!");
+                                    continue;
+                                }
 
                                 if (deposit <= 0) {
 
@@ -252,10 +339,22 @@ public class BankManagementSystem {
                             // ===== WITHDRAW =====
                             case 2:
 
-                                System.out.print(
-                                        "Enter amount to withdraw: ₹");
+                                double withdraw;
 
-                                double withdraw = sc.nextDouble();
+                                try {
+
+                                    System.out.print(
+                                            "Enter amount to withdraw: ₹");
+
+                                    withdraw = Double.parseDouble(
+                                            sc.nextLine());
+
+                                } catch (Exception e) {
+
+                                    System.out.println(
+                                            "Invalid amount!");
+                                    continue;
+                                }
 
                                 if (withdraw <= 0) {
 
@@ -299,35 +398,47 @@ public class BankManagementSystem {
                             // ===== INTEREST CALCULATOR =====
                             case 4:
 
-                                System.out.print(
-                                        "Enter interest rate (%): ");
+                                try {
 
-                                double rate = sc.nextDouble();
+                                    System.out.print(
+                                            "Enter interest rate (%): ");
 
-                                System.out.print(
-                                        "Enter time (years): ");
+                                    double rate =
+                                            Double.parseDouble(
+                                                    sc.nextLine());
 
-                                double time = sc.nextDouble();
+                                    System.out.print(
+                                            "Enter time (years): ");
 
-                                if (rate < 0 || time < 0) {
+                                    double time =
+                                            Double.parseDouble(
+                                                    sc.nextLine());
+
+                                    if (rate < 0 || time < 0) {
+
+                                        System.out.println(
+                                                "Invalid values!");
+
+                                    } else {
+
+                                        double interest =
+                                                (currentUser.balance
+                                                        * rate * time) / 100;
+
+                                        System.out.println(
+                                                "Interest Earned: ₹"
+                                                        + interest);
+
+                                        System.out.println(
+                                                "Total Amount: ₹"
+                                                        + (currentUser.balance
+                                                        + interest));
+                                    }
+
+                                } catch (Exception e) {
 
                                     System.out.println(
-                                            "Invalid values!");
-
-                                } else {
-
-                                    double interest =
-                                            (currentUser.balance *
-                                                    rate * time) / 100;
-
-                                    System.out.println(
-                                            "Interest Earned: ₹"
-                                                    + interest);
-
-                                    System.out.println(
-                                            "Total Amount: ₹"
-                                                    + (currentUser.balance
-                                                    + interest));
+                                            "Invalid input!");
                                 }
 
                                 break;
@@ -335,70 +446,81 @@ public class BankManagementSystem {
                             // ===== APPLY LOAN =====
                             case 5:
 
-                                System.out.print(
-                                        "Enter loan amount: ₹");
+                                try {
 
-                                double loanAmount =
-                                        sc.nextDouble();
+                                    System.out.print(
+                                            "Enter loan amount: ₹");
 
-                                System.out.print(
-                                        "Enter annual interest rate (%): ");
+                                    double loanAmount =
+                                            Double.parseDouble(
+                                                    sc.nextLine());
 
-                                double loanRate =
-                                        sc.nextDouble();
+                                    System.out.print(
+                                            "Enter annual interest rate (%): ");
 
-                                System.out.print(
-                                        "Enter duration (years): ");
+                                    double loanRate =
+                                            Double.parseDouble(
+                                                    sc.nextLine());
 
-                                int years =
-                                        sc.nextInt();
+                                    System.out.print(
+                                            "Enter duration (years): ");
 
-                                if (loanAmount <= 0 ||
-                                        loanRate < 0 ||
-                                        years <= 0) {
+                                    int years =
+                                            Integer.parseInt(
+                                                    sc.nextLine());
+
+                                    if (loanAmount <= 0 ||
+                                            loanRate < 0 ||
+                                            years <= 0) {
+
+                                        System.out.println(
+                                                "Invalid loan details!");
+
+                                    } else {
+
+                                        double simpleInterest =
+                                                (loanAmount *
+                                                        loanRate *
+                                                        years) / 100;
+
+                                        double totalPayable =
+                                                loanAmount +
+                                                        simpleInterest;
+
+                                        double emi =
+                                                totalPayable /
+                                                        (years * 12);
+
+                                        System.out.println(
+                                                "\n===== LOAN DETAILS =====");
+
+                                        System.out.println(
+                                                "Loan Amount: ₹"
+                                                        + loanAmount);
+
+                                        System.out.println(
+                                                "Interest Amount: ₹"
+                                                        + simpleInterest);
+
+                                        System.out.println(
+                                                "Total Payable: ₹"
+                                                        + totalPayable);
+
+                                        System.out.println(
+                                                "Monthly EMI: ₹"
+                                                        + emi);
+
+                                        currentUser.history.add(
+                                                "Loan of ₹" +
+                                                        loanAmount +
+                                                        " applied on "
+                                                        + LocalDateTime.now());
+                                    }
+
+                                } catch (Exception e) {
 
                                     System.out.println(
-                                            "Invalid loan details!");
-
-                                } else {
-
-                                    double simpleInterest =
-                                            (loanAmount *
-                                                    loanRate *
-                                                    years) / 100;
-
-                                    double totalPayable =
-                                            loanAmount +
-                                                    simpleInterest;
-
-                                    double emi =
-                                            totalPayable /
-                                                    (years * 12);
-
-                                    System.out.println(
-                                            "\n===== LOAN DETAILS =====");
-
-                                    System.out.println(
-                                            "Loan Amount: ₹"
-                                                    + loanAmount);
-
-                                    System.out.println(
-                                            "Interest Amount: ₹"
-                                                    + simpleInterest);
-
-                                    System.out.println(
-                                            "Total Payable: ₹"
-                                                    + totalPayable);
-
-                                    System.out.println(
-                                            "Monthly EMI: ₹"
-                                                    + emi);
-
-                                    currentUser.history.add(
-                                            "Loan of ₹" +
-                                                    loanAmount +
-                                                    " applied on "
-                                                    + LocalDateTime.now());
+                                            "Invalid input!");
                                 }
 
                                 break;
@@ -439,6 +561,7 @@ public class BankManagementSystem {
                                         "Invalid Choice!");
                         }
 
+                        // Exit user menu
                         if (choice == 7) {
                             break;
                         }
@@ -457,7 +580,8 @@ public class BankManagementSystem {
 
                 default:
 
-                    System.out.println("Invalid Choice!");
+                    System.out.println(
+                            "Invalid Choice!");
             }
         }
     }
